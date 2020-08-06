@@ -5,12 +5,19 @@ Plug 'liuchengxu/vim-clap', { 'do': ':Clap install-binary!' }
 Plug 'itchyny/lightline.vim'
 Plug 'lambdalisue/fern.vim'
 Plug 'maralla/completor.vim'
-Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'}
+"Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'}
 Plug 'preservim/nerdtree'
 Plug 'ayu-theme/ayu-vim'
 Plug 'danishprakash/vim-yami'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'joshdick/onedark.vim'
+Plug 'junegunn/goyo.vim'
+if has('nvim') || has('patch-8.0.902')
+  Plug 'mhinz/vim-signify'
+else
+  Plug 'mhinz/vim-signify', { 'branch': 'legacy' }
+endif
 "Plug 'https://github.com/ryanoasis/vim-webdevicons'
 "Plug 'https://github.com/adelarsq/vim-devicons-emoji'
 " if has('nvim')
@@ -23,23 +30,29 @@ Plug 'junegunn/fzf.vim'
 call plug#end()
 
 
-let g:deoplete#enable_at_startup = 1
+"let g:deoplete#enable_at_startup = 1
 
+set showmode
+set showcmd
+set updatetime=100
 
-set termguicolors
+"set termguicolors
+colorscheme onedark
 "colorscheme yami
-colorscheme dogrun
+"colorscheme dogrun
 "colorscheme ayu
 "let ayucolor="mirage" 
+let g:onedark_termcolors=256
+let g:onedark_terminal_italics=1
 
 let g:lightline = {
   \ 'colorscheme': 'dogrun',
   \ }
 
 
-let g:clap_theme = 'dogrun'
 
 highlight Normal ctermfg=grey ctermbg=black 
+hi LineNr term=bold cterm=bold ctermfg=236 guifg=Grey guibg=Grey90
 
 
 set mouse=a
@@ -54,22 +67,30 @@ if !has('gui_running')
 endif
 
 "Doomfind
+"nnoremap <space>. <cmd>Clap filer<cr> 
 nnoremap <space>. <cmd>Clap filer<cr> 
 
 "DoomBuffer
 nnoremap <space>bb <cmd>Clap buffers<cr> 
 
-"DoomFileManagerLike
-nnoremap <space>op <cmd>CHADopen<cr> 
-
-"DiredLike
-nnoremap <space>od <cmd>Fern .<cr> 
 
 "To open init file directly
 nnoremap <space>fp <cmd>e! ~/.config/nvim/init.vim<cr>
 
+"Enter project directory
+nnoremap <space>pp <cmd>Clap filer /mnt/d/Workspace<cr>
 
+"Enter contest directory
+nnoremap <space>cc <cmd>Clap filer /mnt/d/Hax<cr>
+
+"Kill Current Buffer
+nnoremap <space>qq <cmd>bdelete<cr>
+
+
+let g:clap_theme = 'material_design_dark'
 let g:clap_layout = { 'relative': 'editor' }
+let g:clap_selected_sign = { 'text': ' >', 'texthl': "ClapSelectedSign", "linehl": "ClapSelected" }
+let g:clap_current_selection_sign = { 'text': '▷', 'texthl': "ClapCurrentSelectionSign", "linehl": "ClapCurrentSelection"}
 
 autocmd BufNewFile *.cpp 0r ~/.vim/templates/skeleton.cpp
 
@@ -99,3 +120,9 @@ noremap <silent> ,cu :<C-B>silent <C-E>s/^\V<C-R>=escape(b:comment_leader,'\/')<
 
 
 command! -bang -nargs=? -complete=dir Files call fzf#vim#files(<q-args>, <bang>0)
+
+
+
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
